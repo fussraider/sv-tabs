@@ -18,7 +18,7 @@ Simple tabs component for Vue.js
 3. Use:
     ```vue
    <sv-tabs>
-       <sv-tab title="Simple tab">
+       <sv-tab title="Simple tab" :active="true">
            <h1>It's simple tab content</h1>
            Here your html-content
        </sv-tab>
