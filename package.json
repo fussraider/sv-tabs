@@ -12,6 +12,10 @@
     "email": "me@fussraider.ru"
   },
   "license": "MIT",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/fussraider/sv-tabs.git"
+  },
   "dependencies": {
     "vue": "^2.6.11"
   },
