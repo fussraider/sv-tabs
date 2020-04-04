@@ -1,0 +1,23 @@
+{
+  "name": "sv-tabs",
+  "version": "0.1.0",
+  "description": "Simple tabs component for Vue.js",
+  "main": "index.js",
+  "keywords": [
+    "tabs",
+    "vue-tabs"
+  ],
+  "author": {
+    "name": "Constantine A.",
+    "email": "me@fussraider.ru"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "sass": "^1.26.3",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  }
+}
