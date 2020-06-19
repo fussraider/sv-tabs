@@ -4,7 +4,8 @@
             <div :class="listContainerClass" ref="listContainer">
                 <div :class="listClass">
                     <div :class="indicatorClass" :style="indicatorStyles"></div>
-                    <div v-for="tab in tabs" v-if="tab.href" :class="tabItemClass(tab)" :data-href="tab.href" ref="items"
+                    <div v-for="tab in tabs" v-if="tab.href" :class="tabItemClass(tab)" :data-href="tab.href"
+                         ref="items"
                          :key="tab.href">
                         <div :class="wrapClass">
                             <a :class="textWrapClass" :href="tab.href" @click.prevent="selectTab(tab)">
@@ -35,6 +36,10 @@
 
     export default {
         props: {
+            changeRoute: {
+                type: Boolean,
+                default: true,
+            },
             classes: {
                 type: Object,
                 required: false,
@@ -42,7 +47,7 @@
             onSelect: {
                 type: Function,
                 required: false,
-            }
+            },
         },
 
         data() {
@@ -62,14 +67,16 @@
         },
 
         mounted() {
-            if (window.location.hash.length) {
+            if (window.location.hash.length && this.changeRoute) {
                 this.activeTab = window.location.hash;
             }
             window.addEventListener('resize', this.onResize);
+            window.addEventListener('popstate', this.onLocationChange);
         },
 
         beforeDestroy() {
             window.removeEventListener('resize', this.onResize);
+            window.removeEventListener('popstate', this.onLocationChange);
         },
 
         updated() {
@@ -77,16 +84,10 @@
             if (this.$refs.items && false === this.refsLoaded) {
                 this.refsLoaded = true;
                 this.$refs.listContainer.addEventListener('scroll', _.debounce(this.defineActiveArrows, 50));
-                this.tabs.forEach(tab => {
-                    if (this.activeTab == null) {
-                        if (tab.active) {
-                            this.activeTab       = tab.href;
-                            window.location.hash = tab.href;
-                        }
-                    }
-                });
-                if(typeof onSelect === 'function')
-                    this.onSelect({href: this.activeTab});
+                let activeTab = this.activeTab ? {href: this.activeTab} : this.tabs.find(tab => tab.active) || this.tabs[0];
+                this.setActiveTabHref(activeTab.href);
+                if (typeof onSelect === 'function')
+                    this.onSelect({ href: this.activeTab });
                 this.updateTabs();
             }
         },
@@ -143,14 +144,14 @@
                 let classes                    = this.getClassesByKey('leftArrow');
                 classes['sv-tabs__arrow']      = true;
                 classes['sv-tabs__arrow_left'] = true;
-                classes['active'] = this.leftArrowActive;
+                classes['active']              = this.leftArrowActive;
                 return classes;
             },
             rightArrowClass() {
                 let classes                     = this.getClassesByKey('rightArrow');
                 classes['sv-tabs__arrow']       = true;
                 classes['sv-tabs__arrow_right'] = true;
-                classes['active'] = this.rightArrowActive;
+                classes['active']               = this.rightArrowActive;
                 return classes;
             },
             detailsClass() {
@@ -161,17 +162,30 @@
         },
 
         methods: {
+            setActiveTabHref(href) {
+                this.activeTab = href;
+                if (this.changeRoute)
+                    window.location.hash = href;
+            },
             onResize() {
                 _.debounce(() => {
                     this.updateTabs();
                 }, 300)();
             },
+            onLocationChange() {
+                let href = window.location.hash;
+                if (this.changeRoute && href && this.activeTab !== href) {
+                    this.setActiveTabHref(href);
+                    this.updateTabs();
+                    if (typeof onSelect === 'function')
+                        this.onSelect({ href });
+                }
+            },
             selectTab(selectedTab) {
-                this.activeTab       = selectedTab.href;
-                window.location.hash = selectedTab.href;
+                this.setActiveTabHref(selectedTab.href);
                 this.updateTabs();
-                if(typeof onSelect === 'function')
-                    this.onSelect({href: selectedTab.href});
+                if (typeof onSelect === 'function')
+                    this.onSelect({ href: selectedTab.href });
             },
 
             updateTabs() {
@@ -179,7 +193,7 @@
                     tab.isActive = (tab.href === this.activeTab);
                 });
                 if (Array.isArray(this.$refs.items)) {
-                    let activeTab        = this.$refs.items.find(item => this.activeTab === item.dataset.href);
+                    let activeTab = this.$refs.items.find(item => this.activeTab === item.dataset.href);
                     this.moveTabsToSeeActiveTab(activeTab);
                     this.recalculateIndicatorPosition(activeTab);
                     this.redefineNavShow();
@@ -240,8 +254,8 @@
             },
 
             defineActiveArrows() {
-                let listContainer = this.$refs.listContainer;
-                this.leftArrowActive = listContainer.scrollLeft > 0;
+                let listContainer     = this.$refs.listContainer;
+                this.leftArrowActive  = listContainer.scrollLeft > 0;
                 this.rightArrowActive = (listContainer.scrollWidth - listContainer.offsetWidth) > listContainer.scrollLeft;
             },
         },
