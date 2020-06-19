@@ -1,6 +1,6 @@
 {
   "name": "sv-tabs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Simple tabs component for Vue.js",
   "main": "index.js",
   "keywords": [
@@ -13,8 +13,8 @@
   },
   "license": "MIT",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/fussraider/sv-tabs.git"
+    "type": "git",
+    "url": "https://github.com/fussraider/sv-tabs.git"
   },
   "dependencies": {
     "vue": "^2.6.11"
