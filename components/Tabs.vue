@@ -1,6 +1,8 @@
 <template>
     <div :class="tabsClass">
+        <slot name="beforeHeaderBegin"></slot>
         <div :class="headerClass" ref="header">
+            <slot name="afterHeaderBegin"></slot>
             <div :class="listContainerClass" ref="listContainer">
                 <div :class="listClass">
                     <div :class="indicatorClass" :style="indicatorStyles"></div>
@@ -16,14 +18,13 @@
                     </div>
                 </div>
             </div>
+            <div :class="navClass" v-show="navShow">
+                <button :class="leftArrowClass" @click="slide('left')"></button>
+                <button :class="rightArrowClass" @click="slide('right')"></button>
+            </div>
+            <slot name="beforeHeaderEnd"></slot>
         </div>
-
-        <div :class="navClass" v-show="navShow">
-            <button :class="leftArrowClass" @click="slide('left')"></button>
-            <button :class="rightArrowClass" @click="slide('right')"></button>
-        </div>
-
-        <slot name="beforeDetails"></slot>
+        <slot name="afterHeaderEnd"></slot>
 
         <div :class="detailsClass">
             <slot></slot>
@@ -84,7 +85,9 @@
             if (this.$refs.items && false === this.refsLoaded) {
                 this.refsLoaded = true;
                 this.$refs.listContainer.addEventListener('scroll', _.debounce(this.defineActiveArrows, 50));
-                let activeTab = this.activeTab ? {href: this.activeTab} : this.tabs.find(tab => tab.active) || this.tabs[0];
+                let activeTab = window.location.hash
+                    ? { href: window.location.hash }
+                    : this.tabs.find(tab => tab.active) || this.tabs[0];
                 this.setActiveTabHref(activeTab.href);
                 if (typeof onSelect === 'function')
                     this.onSelect({ href: this.activeTab });
@@ -173,12 +176,11 @@
                 }, 300)();
             },
             onLocationChange() {
-                let href = window.location.hash;
-                if (this.changeRoute && href && this.activeTab !== href) {
-                    this.setActiveTabHref(href);
+                if (window.location.hash.length > 0) {
+                    this.setActiveTabHref(window.location.hash);
                     this.updateTabs();
                     if (typeof onSelect === 'function')
-                        this.onSelect({ href });
+                        this.onSelect({ href: selectedTab.href });
                 }
             },
             selectTab(selectedTab) {
@@ -261,3 +263,120 @@
         },
     };
 </script>
+
+
+<style lang="scss">
+    .sv-tabs {
+        background-color: #ffffff;
+
+        &__indicator {
+            height: 3px;
+            background: #00d1b2;
+            position: absolute;
+            bottom: 0;
+        }
+
+        &__header {
+            overflow: hidden;
+            user-select: none;
+            align-items: stretch;
+            display: flex;
+            font-size: 1rem;
+            justify-content: space-between;
+            white-space: nowrap;
+
+            .sv-tabs__list-container {
+                width: 100%;
+                overflow: hidden;
+                z-index: 1;
+            }
+
+            &_nav-show {
+
+                .sv-tabs__list-container {
+                    margin: 0 30px;
+                }
+            }
+
+            .sv-tabs__list {
+                list-style: none;
+                align-items: center;
+                display: flex;
+                flex-grow: 1;
+                flex-shrink: 0;
+                justify-content: flex-start;
+                position: relative;
+            }
+
+            .sv-tabs__item {
+                display: block;
+                margin: 0;
+                padding: 0;
+
+                &.active {
+                    a {
+                        border-bottom-color: #00d1b2;
+                        color: #00d1b2;
+                    }
+                }
+
+                a {
+                    text-decoration: none;
+                    align-items: center;
+                    color: #4a4a4a;
+                    display: flex;
+                    justify-content: center;
+                    margin-bottom: -1px;
+                    padding: .5em 1em;
+                    vertical-align: top;
+
+                    &:hover {
+                        color: #363636;
+                    }
+                }
+            }
+        }
+
+        &__nav {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            button {
+                width: 0;
+                height: 0;
+                border-style: solid;
+                background: none;
+            }
+
+            .sv-tabs__arrow_left {
+                border-width: 5px 10px 5px 0;
+                border-color: transparent #6b6b6b transparent transparent;
+                opacity: 0.3;
+
+                &.active {
+                    cursor: pointer;
+                    opacity: 1;
+                }
+            }
+
+            .sv-tabs__arrow_right {
+                border-width: 5px 0 5px 10px;
+                border-color: transparent transparent transparent #6b6b6b;
+                opacity: 0.3;
+
+                &.active {
+                    cursor: pointer;
+                    opacity: 1;
+                }
+            }
+        }
+
+        &__details {
+            position: relative;
+        }
+    }
+</style>
