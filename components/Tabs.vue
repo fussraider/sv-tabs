@@ -73,16 +73,7 @@
             }
             window.addEventListener('resize', this.onResize);
             window.addEventListener('popstate', this.onLocationChange);
-        },
-
-        beforeDestroy() {
-            window.removeEventListener('resize', this.onResize);
-            window.removeEventListener('popstate', this.onLocationChange);
-        },
-
-        updated() {
-            // К сожалению на этапе mounted $refs.items еще нет, поэтому грузим здесь
-            if (this.$refs.items && false === this.refsLoaded) {
+            this.$nextTick(function () {
                 this.refsLoaded = true;
                 this.$refs.listContainer.addEventListener('scroll', _.debounce(this.defineActiveArrows, 50));
                 let activeTab = this.activeTab ? {href: this.activeTab} : this.tabs.find(tab => tab.active) || this.tabs[0];
@@ -90,7 +81,12 @@
                 if (typeof onSelect === 'function')
                     this.onSelect({ href: this.activeTab });
                 this.updateTabs();
-            }
+            })
+        },
+
+        beforeDestroy() {
+            window.removeEventListener('resize', this.onResize);
+            window.removeEventListener('popstate', this.onLocationChange);
         },
 
         computed: {
@@ -195,10 +191,12 @@
                 });
                 if (Array.isArray(this.$refs.items)) {
                     let activeTab = this.$refs.items.find(item => this.activeTab === item.dataset.href);
-                    this.moveTabsToSeeActiveTab(activeTab);
-                    this.recalculateIndicatorPosition(activeTab);
                     this.redefineNavShow();
+                    this.recalculateIndicatorPosition(activeTab);
                     this.defineActiveArrows();
+                    this.$nextTick(function () {
+                        this.moveTabsToSeeActiveTab(activeTab);
+                    });
                 }
             },
 
