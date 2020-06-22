@@ -1,6 +1,6 @@
 {
   "name": "sv-tabs",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Simple tabs component for Vue.js",
   "main": "index.js",
   "keywords": [
