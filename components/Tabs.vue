@@ -85,9 +85,7 @@
             if (this.$refs.items && false === this.refsLoaded) {
                 this.refsLoaded = true;
                 this.$refs.listContainer.addEventListener('scroll', _.debounce(this.defineActiveArrows, 50));
-                let activeTab = window.location.hash
-                    ? { href: window.location.hash }
-                    : this.tabs.find(tab => tab.active) || this.tabs[0];
+                let activeTab = this.activeTab ? {href: this.activeTab} : this.tabs.find(tab => tab.active) || this.tabs[0];
                 this.setActiveTabHref(activeTab.href);
                 if (typeof onSelect === 'function')
                     this.onSelect({ href: this.activeTab });
@@ -176,11 +174,12 @@
                 }, 300)();
             },
             onLocationChange() {
-                if (window.location.hash.length > 0) {
-                    this.setActiveTabHref(window.location.hash);
+                let href = window.location.hash;
+                if (this.changeRoute && href && this.activeTab !== href) {
+                    this.setActiveTabHref(href);
                     this.updateTabs();
                     if (typeof onSelect === 'function')
-                        this.onSelect({ href: selectedTab.href });
+                        this.onSelect({ href });
                 }
             },
             selectTab(selectedTab) {
