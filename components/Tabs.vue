@@ -78,7 +78,7 @@
                 this.$refs.listContainer.addEventListener('scroll', _.debounce(this.defineActiveArrows, 50));
                 let activeTab = this.activeTab ? {href: this.activeTab} : this.tabs.find(tab => tab.active) || this.tabs[0];
                 this.setActiveTabHref(activeTab.href);
-                if (typeof onSelect === 'function')
+                if (typeof this.onSelect === 'function')
                     this.onSelect({ href: this.activeTab });
                 this.updateTabs();
             })
@@ -174,14 +174,14 @@
                 if (this.changeRoute && href && this.activeTab !== href) {
                     this.setActiveTabHref(href);
                     this.updateTabs();
-                    if (typeof onSelect === 'function')
+                    if (typeof this.onSelect === 'function')
                         this.onSelect({ href });
                 }
             },
             selectTab(selectedTab) {
                 this.setActiveTabHref(selectedTab.href);
                 this.updateTabs();
-                if (typeof onSelect === 'function')
+                if (typeof this.onSelect === 'function')
                     this.onSelect({ href: selectedTab.href });
             },
 
