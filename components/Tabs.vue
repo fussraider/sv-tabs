@@ -77,7 +77,7 @@
                 this.refsLoaded = true;
                 this.$refs.listContainer.addEventListener('scroll', _.debounce(this.defineActiveArrows, 50));
                 let activeTab = this.activeTab ? {href: this.activeTab} : this.tabs.find(tab => tab.active) || this.tabs[0];
-                this.setActiveTabHref(activeTab.href);
+                this.setActiveTabHref(activeTab.href, true);
                 if (typeof this.onSelect === 'function')
                     this.onSelect({ href: this.activeTab });
                 this.updateTabs();
@@ -159,10 +159,14 @@
         },
 
         methods: {
-            setActiveTabHref(href) {
-                this.activeTab = href;
-                if (this.changeRoute)
-                    window.location.hash = href;
+            setActiveTabHref(href, replace = false) {
+              this.activeTab = href;
+              if (this.changeRoute){
+                if(replace){
+                  history.replaceState(null, null, href);
+                }
+                window.location.hash = href;
+              }
             },
             onResize() {
                 _.debounce(() => {
