@@ -345,6 +345,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: -1;
 
             button {
                 width: 0;
