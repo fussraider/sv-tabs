@@ -1,8 +1,8 @@
 <template>
     <div :class="tabsClass">
-        <slot name="beforeHeaderBegin"></slot>
+        <slot name="beforeHeaderBegin" :activeTab="activeTab"></slot>
         <div :class="headerClass" ref="header">
-            <slot name="afterHeaderBegin"></slot>
+            <slot name="afterHeaderBegin" :activeTab="activeTab"></slot>
             <div :class="listContainerClass" ref="listContainer">
                 <div :class="listClass">
                     <div :class="indicatorClass" :style="indicatorStyles"></div>
@@ -22,9 +22,9 @@
                 <button :class="leftArrowClass" @click="slide('left')"></button>
                 <button :class="rightArrowClass" @click="slide('right')"></button>
             </div>
-            <slot name="beforeHeaderEnd"></slot>
+            <slot name="beforeHeaderEnd" :activeTab="activeTab"></slot>
         </div>
-        <slot name="afterHeaderEnd"></slot>
+        <slot name="afterHeaderEnd" :activeTab="activeTab"></slot>
 
         <div :class="detailsClass">
             <slot></slot>
