@@ -1,6 +1,7 @@
 # Simple Vue Tabs
 
 Simple tabs component for Vue.js
+Works only if you use vue-route in your project
 
 # Install
 
