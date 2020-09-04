@@ -10,10 +10,10 @@
                          ref="items"
                          :key="tab.href">
                         <div :class="wrapClass">
-                            <a :class="textWrapClass" :href="tab.href" @click.prevent="selectTab(tab)">
+                            <router-link :to="{hash: tab.href}" :class="textWrapClass" :href="tab.href">
                                 <span :class="textClass" v-if="tab.htmlTitle" v-html="tab.title"></span>
                                 <span :class="textClass" v-else>{{ tab.title }}</span>
-                            </a>
+                            </router-link>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@
             return {
                 tabs: [],
                 activeTab: null,
-                indicatorStyles: { width: 0, left: 0 },
+                indicatorStyles: {width: 0, left: 0},
                 refsLoaded: false,
                 navShow: false,
                 leftArrowActive: false,
@@ -77,9 +77,9 @@
                 this.refsLoaded = true;
                 this.$refs.listContainer.addEventListener('scroll', _.debounce(this.defineActiveArrows, 50));
                 let activeTab = this.activeTab ? {href: this.activeTab} : this.tabs.find(tab => tab.active) || this.tabs[0];
-                this.setActiveTabHref(activeTab.href, true);
+                this.setActiveTabHref(activeTab.href);
                 if (typeof this.onSelect === 'function')
-                    this.onSelect({ href: this.activeTab });
+                    this.onSelect({href: this.activeTab});
                 this.updateTabs();
             })
         },
@@ -159,34 +159,13 @@
         },
 
         methods: {
-            setActiveTabHref(href, replace = false) {
-              this.activeTab = href;
-              if (this.changeRoute){
-                if(replace){
-                  history.replaceState(null, null, href);
-                }
-                window.location.hash = href;
-              }
+            setActiveTabHref(href) {
+                this.activeTab = href;
             },
             onResize() {
                 _.debounce(() => {
                     this.updateTabs();
                 }, 300)();
-            },
-            onLocationChange() {
-                let href = window.location.hash;
-                if (this.changeRoute && href && this.activeTab !== href) {
-                    this.setActiveTabHref(href);
-                    this.updateTabs();
-                    if (typeof this.onSelect === 'function')
-                        this.onSelect({ href });
-                }
-            },
-            selectTab(selectedTab) {
-                this.setActiveTabHref(selectedTab.href);
-                this.updateTabs();
-                if (typeof this.onSelect === 'function')
-                    this.onSelect({ href: selectedTab.href });
             },
 
             updateTabs() {
@@ -227,7 +206,7 @@
             },
 
             recalculateIndicatorPosition(activeTab) {
-                this.indicatorStyles = { left: `${activeTab.offsetLeft}px`, width: `${activeTab.offsetWidth}px` };
+                this.indicatorStyles = {left: `${activeTab.offsetLeft}px`, width: `${activeTab.offsetWidth}px`};
             },
 
             redefineNavShow() {
@@ -262,6 +241,17 @@
                 this.rightArrowActive = (listContainer.scrollWidth - listContainer.offsetWidth) > listContainer.scrollLeft;
             },
         },
+        watch: {
+            $route(to, from) {
+                let href = to.hash;
+                if (this.changeRoute && href && this.activeTab !== href) {
+                    this.setActiveTabHref(href);
+                    this.updateTabs();
+                    if (typeof this.onSelect === 'function')
+                        this.onSelect({href});
+                }
+            }
+        }
     };
 </script>
 
