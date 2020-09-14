@@ -50,7 +50,7 @@
                 }
             },
             containerClass() {
-                return {'sv-tabas__body-container': true, 'sv-tabas__body-container_active': this.isActive};
+                return {'sv-tabs__body-container': true, 'sv-tabs__body-container_active': this.isActive};
             }
         },
 
