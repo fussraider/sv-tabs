@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :class="containerClass">
         <div v-if="lazyLoad">
             <div class="sv-tabs__body sv-tabs__body_lazy" v-if="isActive">
                 <slot></slot>
@@ -49,6 +49,9 @@
                     return '#' + this.name;
                 }
             },
+            containerClass() {
+                return {'sv-tabas__body-container': true, 'sv-tabas__body-container_active': this.isActive};
+            }
         },
 
     }
