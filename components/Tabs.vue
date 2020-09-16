@@ -177,12 +177,14 @@
                 });
                 if (Array.isArray(this.$refs.items)) {
                     let activeTab = this.$refs.items.find(item => this.activeTab === item.dataset.href);
-                    this.redefineNavShow();
-                    this.recalculateIndicatorPosition(activeTab);
-                    this.defineActiveArrows();
-                    this.$nextTick(function () {
+                    if (typeof activeTab !== 'undefined') {
+                      this.redefineNavShow();
+                      this.recalculateIndicatorPosition(activeTab);
+                      this.defineActiveArrows();
+                      this.$nextTick(function () {
                         this.moveTabsToSeeActiveTab(activeTab);
-                    });
+                      });
+                    }
                 }
             },
 
