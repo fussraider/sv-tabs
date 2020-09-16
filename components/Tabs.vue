@@ -244,7 +244,7 @@
                 this.rightArrowActive = (listContainer.scrollWidth - listContainer.offsetWidth) > listContainer.scrollLeft;
             },
             changeTab(href) {
-                if(this.changeRoute === true)
+                if(this.changeRoute === true && this.activeTab !== href)
                     this.$router.push({hash: href});
                 else
                     this.setActiveTabHref(href);
