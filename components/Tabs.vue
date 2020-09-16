@@ -10,10 +10,10 @@
                          ref="items"
                          :key="tab.href">
                         <div :class="wrapClass">
-                            <router-link :to="{hash: tab.href}" :class="textWrapClass" :href="tab.href">
+                            <a @click.prevent="changeTab(tab.href)" :class="textWrapClass" :href="tab.href">
                                 <span :class="textClass" v-if="tab.htmlTitle" v-html="tab.title"></span>
                                 <span :class="textClass" v-else>{{ tab.title }}</span>
-                            </router-link>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -77,7 +77,7 @@
                 this.refsLoaded = true;
                 this.$refs.listContainer.addEventListener('scroll', _.debounce(this.defineActiveArrows, 50));
                 let activeTab = this.activeTab ? {href: this.activeTab} : this.tabs.find(tab => tab.active) || this.tabs[0];
-                this.setActiveTabHref(activeTab.href);
+                this.changeTab(activeTab.href);
                 if (typeof this.onSelect === 'function')
                     this.onSelect({href: this.activeTab});
                 this.updateTabs();
@@ -161,6 +161,9 @@
         methods: {
             setActiveTabHref(href) {
                 this.activeTab = href;
+                this.updateTabs();
+                if (typeof this.onSelect === 'function')
+                    this.onSelect({href: this.activeTab});
             },
             onResize() {
                 _.debounce(() => {
@@ -240,17 +243,20 @@
                 this.leftArrowActive  = listContainer.scrollLeft > 0;
                 this.rightArrowActive = (listContainer.scrollWidth - listContainer.offsetWidth) > listContainer.scrollLeft;
             },
+            changeTab(href) {
+                if(this.changeRoute === true)
+                    this.$router.push({hash: href});
+                else
+                    this.setActiveTabHref(href);
+            }
         },
         watch: {
             $route(to, from) {
                 let href = to.hash;
-                if (this.changeRoute && href && this.activeTab !== href) {
+                if (href && this.activeTab !== href) {
                     this.setActiveTabHref(href);
-                    this.updateTabs();
-                    if (typeof this.onSelect === 'function')
-                        this.onSelect({href});
                 }
-            }
+            },
         }
     };
 </script>
