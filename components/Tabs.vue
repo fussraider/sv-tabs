@@ -258,9 +258,11 @@
         },
         watch: {
             $route(to, from) {
-                let href = to.hash;
-                if (href && this.activeTab !== href) {
-                    this.setActiveTabHref(href);
+                if(this.changeRoute) {
+                    let href = to.hash;
+                    if (href && this.activeTab !== href) {
+                        this.setActiveTabHref(href);
+                    }
                 }
             },
         }
