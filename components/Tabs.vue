@@ -77,7 +77,7 @@
                 this.refsLoaded = true;
                 this.$refs.listContainer.addEventListener('scroll', _.debounce(this.defineActiveArrows, 50));
                 let activeTab = this.activeTab ? {href: this.activeTab} : this.tabs.find(tab => tab.active) || this.tabs[0];
-                this.changeTab(activeTab.href);
+                this.changeTab(activeTab.href, true);
                 if (typeof this.onSelect === 'function')
                     this.onSelect({href: this.activeTab});
                 this.updateTabs();
@@ -245,9 +245,13 @@
                 this.leftArrowActive  = listContainer.scrollLeft > 0;
                 this.rightArrowActive = (listContainer.scrollWidth - listContainer.offsetWidth) > listContainer.scrollLeft;
             },
-            changeTab(href) {
-                if(this.changeRoute === true && this.activeTab !== href)
-                    this.$router.push({hash: href});
+            changeTab(href, replace = false) {
+                if(this.changeRoute === true && this.activeTab !== href) {
+                    if(replace)
+                        this.$router.replace({hash: href, query: this.$route.query});
+                    else
+                        this.$router.push({hash: href, query: this.$route.query});
+                }
                 else
                     this.setActiveTabHref(href);
             }
