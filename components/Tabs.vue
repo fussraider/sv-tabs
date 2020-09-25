@@ -360,6 +360,9 @@
                 border-width: 5px 10px 5px 0;
                 border-color: transparent #6b6b6b transparent transparent;
                 opacity: 0.3;
+                position: absolute;
+                left: 10px;
+                outline: none;
 
                 &.active {
                     cursor: pointer;
@@ -371,6 +374,9 @@
                 border-width: 5px 0 5px 10px;
                 border-color: transparent transparent transparent #6b6b6b;
                 opacity: 0.3;
+                position: absolute;
+                right: 10px;
+                outline: none;
 
                 &.active {
                     cursor: pointer;
